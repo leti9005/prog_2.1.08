@@ -35,20 +35,20 @@ class ReplaceCommand {
 function getCommandsFromArgs(args) {
     const commands = [];
 
-    for (let i = 0; i < args.length; i++) {
+    for (let i = 0; i < args.length;) {
         const arg = args[i];
 
-        const targetSentenceIndex = +arg[2];
+        const sentenceIndex = +arg.substr(2);
 
-        const command = new ReplaceCommand(targetSentenceIndex, args[i + 1]);
+        const command = new ReplaceCommand(sentenceIndex, args[i + 1]);
         const type = arg[1];
 
         if (type === 'r') {
             command.replaceWith = args[i + 2];
-            i += 2;
+            i += 3;
         }
         else {
-            i++;
+            i += 2;
         }
 
         commands.push(command);
