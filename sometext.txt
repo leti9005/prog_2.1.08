@@ -1,0 +1,1 @@
+This is a text that is very suitable for testing the ReplaceDelete application (s0). You can write some commands that will replace and delete some of the words (s1).
