@@ -5,8 +5,33 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "g++ comment.cpp",
-            "group": "build"
-        }
+            "command": "g++ ./cpp/main.cpp -o ./cpp/main.exe",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+
+        {
+            "type": "shell",
+            "label": "build active",
+            "command": "C:/MinGW/bin/g++.exe",
+            "args": [
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+            ],
+            "options": {
+                "cwd": "C:/MinGW/bin/"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
     ]
 }

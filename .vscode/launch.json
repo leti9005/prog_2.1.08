@@ -3,11 +3,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Launch",
+            "name": "build and debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/a.exe",
-            "args": [],
+            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "args": [  "./sometext.txt", "./out.txt", "-d2", "ui", "-r4", "e", "f" ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -18,9 +18,10 @@
                 {
                     "description": "Enable pretty-printing for gdb",
                     "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
+                    "ignoreFailures": false
                 }
-            ]
+            ],
+            "preLaunchTask": "build active"
         }
     ]
 }

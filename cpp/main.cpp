@@ -1,73 +1,75 @@
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <vector>
-#include "ReplaceCommand.cpp"
+#include "main.h"
 
 using namespace std;
 
-vector<ReplaceCommand> getCommandsFromArgs(vector<string> args) {
-    vector<ReplaceCommand> commands;
+ListNode<ReplaceCommand> getCommandsFromArgs(char* args[], int argsCount)
+{
+    ListNode<ReplaceCommand>* firstCommandNode = nullptr;
 
-    for (size_t i = 0; i < args.size();) {
-        auto arg = args[i];
+    auto commandNodePtr = &firstCommandNode;
+
+    for (char** argPtr = args;;) // переделать на while?
+    {
+        auto argument = new string(*argPtr);
 
         // "-d100", get 100
-        auto sentenceIndex = stoi(arg.substr(2));
+        int sentenceIndex = stoi(argument->substr(2));
 
         // "-d100 ивет", get "ивет"
-        auto wordEnding = args[i + 1];
+        string wordEnding = *(argPtr + 1);
 
-        auto command = new ReplaceCommand(
-            sentenceIndex,
-            wordEnding
-        );
+        *commandNodePtr = new ListNode<ReplaceCommand>();
+        auto commandNode = *commandNodePtr;
+        commandNode->Value = new ReplaceCommand(sentenceIndex, wordEnding);
 
-        auto type = arg[1];
+        auto type = argument->at(1);
 
         if (type == 'r') {
-            command->replaceWith = args[i + 2];
-            i += 3;
+            string replaceWith = *(argPtr + 2);
+            commandNode->Value->ReplaceWith = replaceWith;
+            argPtr += 3;
+            argsCount -= 3;
+        }
+        else if (type == 'd') {
+            argPtr += 2;
+            argsCount -= 2;
         }
         else {
-            i += 2;
+            throw new std::invalid_argument("wrong type. must be one of: 'd', 'r'.");
         }
 
-        cout << "sentenceIndex: " << command->sentenceIndex << "\n";
-        cout << "wordEnding: " << command->wordEnding << "\n";
-        cout << "replaceWith: " << command->replaceWith << "\n\n";
+        if (!argsCount) break;
 
-        commands.push_back(*command);
+        commandNode->Next = new ListNode<ReplaceCommand>();
+        commandNodePtr = &commandNode->Next;
     }
 
-    return commands;
+    return *firstCommandNode;
 }
 
-string readFile(string filePath) {
-    std::ifstream t(filePath);
-    std::stringstream buffer;
-    buffer << t.rdbuf();
+int main(int argc, char* argv[])
+{
+    // TODO: валидация argv?
 
-    return buffer.str();
-}
-
-int main(int argc, char* argv[]) {
     string inputFileName = argv[1];
     string outputFileName = argv[2];
+    // TODO: валидация inputFileName, outputFileName?
 
-    cout << "inputFile: " << inputFileName << "\n";
-    cout << "outputFile: " << outputFileName << "\n\n";
+    std::cout << "inputFile: " << inputFileName << "\n";
+    std::cout << "outputFile: " << outputFileName << "\n\n";
 
-    vector<string> args(&argv[3], &argv[argc]);
+    auto count = argc - 3; // exclude `mykursach.exe`, `inputFileName` and `outputFileName`
+    auto commandArgsPtr = argv + 3; // skip those
 
-    auto commands = getCommandsFromArgs(args);
+    auto firstCommandNode = getCommandsFromArgs(commandArgsPtr, count); // TODO: count
 
-    auto text = readFile(inputFileName);
-
-    cout << "old text: \n" << text << "\n\n";
-
-    for (auto c: commands) {
-        text = c.ApplyTo(text);
+    int i = 0;
+    for (auto commandNode = &firstCommandNode; commandNode != nullptr; commandNode = commandNode->Next)
+    {
+        commandNode->Value->Print();
+        cout << i++ << endl << endl;
     }
-    cout << "new text: \n" << text << "\n\n";
+
+    // commandsFirstNode.Value.Print();
+    // cout << endl;
 }

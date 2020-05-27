@@ -28,7 +28,7 @@
 
 # Пример (насколько я понял):
 ```powershell
-moyakursovayarabota.exe input.txt output.txt -d2 уй -r4 Привет Пока
+.\moyakursovayarabota.exe input.txt output.txt -d2 уй -r4 Привет Пока
 ```
 
 Удалит во втором предложении все слова, которые заканчиваются на "уй".
