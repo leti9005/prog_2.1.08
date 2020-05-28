@@ -1,3 +1,7 @@
+это вообще не сооветствует версии на cpp так-то.
+
+### как
+
 берёшь `node`
 
 пишешь: `node index.js sometext.txt out.txt -r0 й [DELETED]`

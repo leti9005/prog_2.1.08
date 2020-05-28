@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
-#include "ListNode.h"
+#include "Queue.h"
 #include "ReplaceCommand.h"
 
-ListNode<ReplaceCommand> getCommandsFromArgs(char* args[], int argsCount);
+Queue<ReplaceCommand> getCommandQueueFromArgs(char* args[], int argsCount);
 int main(int argc, char* argv[]);

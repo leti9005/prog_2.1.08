@@ -18,5 +18,5 @@ void ReplaceCommand::Print()
     std::cout << "wordEnding: " << this->WordEnding << "\n";
     std::cout << "replaceWith: " << this->ReplaceWith << "\n";
 
-    std::cout << '\n';
+    std::cout << std::endl;
 }

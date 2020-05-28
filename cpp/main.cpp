@@ -2,13 +2,11 @@
 
 using namespace std;
 
-ListNode<ReplaceCommand> getCommandsFromArgs(char* args[], int argsCount)
+Queue<ReplaceCommand> getCommandQueueFromArgs(char* args[], int argsCount)
 {
-    ListNode<ReplaceCommand>* firstCommandNode = nullptr;
+    Queue<ReplaceCommand> queue(argsCount);
 
-    auto commandNodePtr = &firstCommandNode;
-
-    for (char** argPtr = args;;) // переделать на while?
+    for (char** argPtr = args;;) // while (argsCount) ?
     {
         auto argument = new string(*argPtr);
 
@@ -18,33 +16,35 @@ ListNode<ReplaceCommand> getCommandsFromArgs(char* args[], int argsCount)
         // "-d100 ивет", get "ивет"
         string wordEnding = *(argPtr + 1);
 
-        *commandNodePtr = new ListNode<ReplaceCommand>();
-        auto commandNode = *commandNodePtr;
-        commandNode->Value = new ReplaceCommand(sentenceIndex, wordEnding);
+        ReplaceCommand command(sentenceIndex, wordEnding);
 
         auto type = argument->at(1);
 
         if (type == 'r') {
             string replaceWith = *(argPtr + 2);
-            commandNode->Value->ReplaceWith = replaceWith;
-            argPtr += 3;
-            argsCount -= 3;
+            command.ReplaceWith = replaceWith;
+
+            int skippedArgsCount = 3;
+
+            argPtr += skippedArgsCount;
+            argsCount -= skippedArgsCount;
         }
         else if (type == 'd') {
-            argPtr += 2;
-            argsCount -= 2;
+            int skippedArgsCount = 2;
+
+            argPtr += skippedArgsCount;
+            argsCount -= skippedArgsCount;
         }
         else {
-            throw new std::invalid_argument("wrong type. must be one of: 'd', 'r'.");
+            throw new std::invalid_argument("Wrong operation type. Must be one of: 'd' (for delete), 'r' (for replace).");
         }
 
-        if (!argsCount) break;
+        queue.Enqueue(command);
 
-        commandNode->Next = new ListNode<ReplaceCommand>();
-        commandNodePtr = &commandNode->Next;
+        if (!argsCount) break;
     }
 
-    return *firstCommandNode;
+    return queue;
 }
 
 int main(int argc, char* argv[])
@@ -58,18 +58,16 @@ int main(int argc, char* argv[])
     std::cout << "inputFile: " << inputFileName << "\n";
     std::cout << "outputFile: " << outputFileName << "\n\n";
 
-    auto count = argc - 3; // exclude `mykursach.exe`, `inputFileName` and `outputFileName`
-    auto commandArgsPtr = argv + 3; // skip those
+    int nonCommandArgsCount = 3; // "mykursach.exe", `inputFileName`, `outputFileName`
 
-    auto firstCommandNode = getCommandsFromArgs(commandArgsPtr, count); // TODO: count
+    auto commandArgsPtr = argv + nonCommandArgsCount;
+    auto commandArgsCount = argc - nonCommandArgsCount;
 
-    int i = 0;
-    for (auto commandNode = &firstCommandNode; commandNode != nullptr; commandNode = commandNode->Next)
+    auto commandQueue = getCommandQueueFromArgs(commandArgsPtr, commandArgsCount);
+
+    while (!commandQueue.IsEmpty())
     {
-        commandNode->Value->Print();
-        cout << i++ << endl << endl;
+        auto command = commandQueue.Dequeue();
+        command.Print();
     }
-
-    // commandsFirstNode.Value.Print();
-    // cout << endl;
 }
