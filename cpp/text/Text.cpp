@@ -34,11 +34,6 @@ Text Text::FromFile(string filename)
     return text;
 }
 
-void Text::SaveTo(string filename)
-{
-    // todo: implement me!
-}
-
 bool EndsWith(string str, string ending)
 {
     int substrFrom = str.length() - ending.length();
@@ -145,4 +140,41 @@ void Text::Print()
 
         cout << endl;
     } while (sentenceNodePtr = sentenceNodePtr->Next);
+}
+
+void Text::SaveTo(string filename)
+{
+    ofstream output(filename);
+
+    auto sentenceNodePtr = _sentenceSequence._head;
+
+    if (!sentenceNodePtr)
+    {
+        cerr << "# Text is empty." << endl;
+        return;
+    }
+
+    do
+    {
+        auto sentence = *sentenceNodePtr;
+
+        auto wordNode = sentence.Value->_head;
+
+        if (!wordNode) continue;
+
+        if (sentenceNodePtr != _sentenceSequence._head)
+        {
+            output << ". ";
+        }
+
+        output << (*wordNode).Value;
+
+        while (wordNode = wordNode->Next)
+        {
+            output << " " << (*wordNode).Value;
+        }
+
+    } while (sentenceNodePtr = sentenceNodePtr->Next);
+
+    output << ".";
 }

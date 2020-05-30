@@ -25,6 +25,8 @@ int main(int argc, char* argv[])
 
     text.Print();
     cout << endl;
+
+    text.SaveTo(outputFileName);
 }
 
 
