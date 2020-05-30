@@ -41,22 +41,65 @@ void Text::SaveTo(string filename)
     // todo: implement me!
 }
 
+bool EndsWith(string str, string ending)
+{
+    int substrFrom = str.length() - ending.length();
+    return substrFrom >= 0 && ending == str.substr(substrFrom);
+}
+
+void Text::Apply(ReplaceCommand command)
+{
+    auto sentence = _sentenceSequence.ElementAt(command.SentenceIndex)->Value;
+
+    ListNode<string>* word = sentence->_head;
+    while (EndsWith(word->Value, command.WordEnding))
+    {
+        if (command.ReplaceWith != "")
+        {
+            word->Value = command.ReplaceWith;
+            break;
+        }
+
+        sentence->_head = word->Next; // word->Next ? word->Next : nullptr;
+        delete word;
+        word = sentence->_head;
+    }
+
+    auto nextWord = word->Next;
+    do
+    {
+        if (!nextWord) break;
+
+        if (!EndsWith(nextWord->Value, command.WordEnding)) continue;
+
+        if (command.ReplaceWith != "")
+        {
+            nextWord->Value = command.ReplaceWith;
+            word = nextWord;
+        }
+        else
+        {
+            word->Next = nextWord->Next;
+            delete nextWord;
+        }
+
+    } while (nextWord = nextWord->Next);
+
+}
+
 void Text::RemoveLastSentence()
 {
-    _text.RemoveLastNode();
+    _sentenceSequence.RemoveLastNode();
 }
 
 void Text::Add(string word)
 {
-    cout << "checking last sentence: " << endl;
-
-    if (_text.IsEmpty())
+    if (_sentenceSequence.IsEmpty())
     {
-        cout << "starting new sentence" << endl;
         StartNewSentence();
     }
 
-    auto lastSentenceNode = _text.GetLast();
+    auto lastSentenceNode = _sentenceSequence.GetLast();
     auto sentence = lastSentenceNode->Value;
 
     sentence->Add(word);
@@ -64,12 +107,12 @@ void Text::Add(string word)
 
 void Text::StartNewSentence()
 {
-    _text.Add(new Sentence());
+    _sentenceSequence.Add(new Sentence());
 }
 
 void Text::Print()
 {
-    auto sentenceNodePtr = _text.GetHead();
+    auto sentenceNodePtr = _sentenceSequence._head;
 
     if (!sentenceNodePtr)
     {

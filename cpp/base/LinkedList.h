@@ -46,6 +46,21 @@ public: // private:
         return h;
     }
 
+    ListNode<T>* ElementAt(int pos)
+    {
+        auto h = _head;
+        if (pos == 0) return h;
+
+        int i = 0;
+        while (i != pos && h->Next != nullptr)
+        {
+            h = h->Next;
+            i++;
+        }
+
+        return h;
+    }
+
     bool IsEmpty()
     {
         return _head == nullptr;

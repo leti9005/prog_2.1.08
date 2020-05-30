@@ -61,8 +61,7 @@ int main(int argc, char* argv[])
     auto text = Text::FromFile(inputFileName);
 
     text.Print();
-
-    exit(0);
+    cout << endl;
 
     int nonCommandArgsCount = 3; // "mykursach.exe", `inputFileName`, `outputFileName`
 
@@ -74,6 +73,13 @@ int main(int argc, char* argv[])
     while (!commandQueue.IsEmpty())
     {
         auto command = commandQueue.Dequeue();
-        // command.Print();
+        command.Print();
+
+        text.Apply(command);
+        cout << endl;
     }
+
+    cout << endl;
+    text.Print();
+    cout << endl;
 }

@@ -3,11 +3,12 @@
 #include <iostream>
 #include "../base/LinkedList.h"
 #include "Sentence.h"
+#include "../ReplaceCommand.h"
 
 struct Text
 {
 private:
-    LinkedList<Sentence*> _text;
+    LinkedList<Sentence*> _sentenceSequence;
 
 public:
     static Text FromFile(std::string filename);
@@ -18,4 +19,5 @@ public:
     void RemoveLastSentence();
 
     void Print();
+    void Apply(ReplaceCommand command);
 };
