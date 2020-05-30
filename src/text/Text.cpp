@@ -5,6 +5,37 @@
 
 using namespace std;
 
+bool EndsWith(string str, string ending)
+{
+    int substrFrom = str.length() - ending.length();
+    return substrFrom >= 0 && ending == str.substr(substrFrom);
+}
+
+string TrimLastChar(string str)
+{
+    return str.substr(0, str.length() - 1);
+}
+
+bool ispunct(char c)
+{
+    char punctuation[] = ",:";
+
+    for (char p: punctuation) {
+        if (c == p) return true;
+    }
+
+    return false;
+}
+
+bool ispunct(string str)
+{
+    if (str.length() != 1) return false;
+
+    auto back = str.back();
+
+    return ispunct(back);
+}
+
 Text Text::FromFile(string filename)
 {
     ifstream inputStream;
@@ -14,81 +45,70 @@ Text Text::FromFile(string filename)
     string word;
     while (inputStream >> word)
     {
-        if (word.back() != '.')
-        {
-            text.Add(word);
-        }
-        else
-        {
-            auto wordWithoutDot = word.substr(0, word.length() - 1);
-
-            text.Add(wordWithoutDot);
-            text.StartNewSentence();
-        }
+        text.WriteToken(word);
     }
-
-    text.RemoveLastSentence();
 
     inputStream.close();
 
-    return text;
-}
+    auto firstWordInTheLastSentencePtr = text._sentenceSequence.GetLast()->Value->_head;
+    if (!firstWordInTheLastSentencePtr)
+    {
+        text.RemoveLastSentence();
+    }
 
-bool EndsWith(string str, string ending)
-{
-    int substrFrom = str.length() - ending.length();
-    return substrFrom >= 0 && ending == str.substr(substrFrom);
+    return text;
 }
 
 void Text::Apply(ReplaceCommand command)
 {
     auto sentence = _sentenceSequence.ElementAt(command.SentenceIndex)->Value;
 
-    ListNode<string>* word = sentence->_head;
-    if (!word) return;
+    auto tokenNode = sentence->_head;
+    if (!tokenNode) return;
 
-    while (EndsWith(word->Value, command.WordEnding))
+    while (EndsWith(tokenNode->Value, command.WordEnding))
     {
         if (command.ReplaceWith != "")
         {
-            word->Value = command.ReplaceWith;
+            tokenNode->Value = command.ReplaceWith;
             break;
         }
 
-        sentence->_head = word->Next;
-        delete word;
-        word = sentence->_head;
+        sentence->_head = tokenNode->Next;
+        delete tokenNode;
+        tokenNode = sentence->_head;
 
-        // ой, удалили последнее слово!
-        if (!word) return;
+        // если удалили последнее слово, больше с этим предложением ничего не поделаешь
+        if (!tokenNode) return;
     }
 
-    auto nextWord = word->Next;
+    auto nextTokenNode = tokenNode->Next;
     do
     {
-        if (!nextWord) break;
+        if (!nextTokenNode) break;
 
-        if (!EndsWith(nextWord->Value, command.WordEnding))
+        if (ispunct(nextTokenNode->Value)) continue;
+
+        if (!EndsWith(nextTokenNode->Value, command.WordEnding))
         {
-            word = nextWord;
+            tokenNode = nextTokenNode;
             continue;
         }
 
         if (command.ReplaceWith != "")
         {
-            nextWord->Value = command.ReplaceWith;
+            nextTokenNode->Value = command.ReplaceWith;
         }
         else
         {
-            word->Next = nextWord->Next;
-            delete nextWord;
+            tokenNode->Next = nextTokenNode->Next;
+            delete nextTokenNode;
 
-            nextWord = word;
+            nextTokenNode = tokenNode;
         }
 
-        word = nextWord;
-    } while (nextWord = nextWord->Next);
-
+        tokenNode = nextTokenNode;
+    } while (nextTokenNode = nextTokenNode->Next);
 }
 
 void Text::RemoveLastSentence()
@@ -96,20 +116,35 @@ void Text::RemoveLastSentence()
     _sentenceSequence.RemoveLastNode();
 }
 
-void Text::Add(string word)
+void Text::WriteToken(string token)
 {
     if (_sentenceSequence.IsEmpty())
     {
-        StartNewSentence();
+        BeginSentence();
     }
 
     auto lastSentenceNode = _sentenceSequence.GetLast();
     auto sentence = lastSentenceNode->Value;
 
-    sentence->Add(word);
+    char tokenBack = token.back();
+
+    if (tokenBack == '.')
+    {
+        sentence->Add(TrimLastChar(token));
+        BeginSentence();
+    }
+    else if (ispunct(tokenBack))
+    {
+        sentence->Add(TrimLastChar(token));
+        sentence->Add(string(1, tokenBack));
+    }
+    else
+    {
+        sentence->Add(token);
+    }
 }
 
-void Text::StartNewSentence()
+void Text::BeginSentence()
 {
     _sentenceSequence.Add(new Sentence());
 }
@@ -126,17 +161,19 @@ void Text::Print()
 
     do
     {
-        auto sentence = *sentenceNodePtr;
-        auto wordNode = sentence.Value->_head;
+        auto tokenNodePtr = sentenceNodePtr->Value->_head;
 
-        if (!wordNode) continue;
+        if (!tokenNodePtr) continue;
 
-        cout << (*wordNode).Value << " ";
-
-        while (wordNode = wordNode->Next)
+        do
         {
-            cout << (*wordNode).Value << " ";
-        }
+            cout << tokenNodePtr->Value;
+
+            if (tokenNodePtr->Next && !ispunct(tokenNodePtr->Next->Value))
+            {
+                cout << " ";
+            }
+        } while (tokenNodePtr = tokenNodePtr->Next);
 
         cout << endl;
     } while (sentenceNodePtr = sentenceNodePtr->Next);
@@ -148,33 +185,29 @@ void Text::SaveTo(string filename)
 
     auto sentenceNodePtr = _sentenceSequence._head;
 
-    if (!sentenceNodePtr)
-    {
-        cerr << "# Text is empty." << endl;
-        return;
-    }
-
     do
     {
-        auto sentence = *sentenceNodePtr;
-
-        auto wordNode = sentence.Value->_head;
-
-        if (!wordNode) continue;
-
         if (sentenceNodePtr != _sentenceSequence._head)
         {
-            output << ". ";
+            output << " ";
         }
 
-        output << (*wordNode).Value;
+        auto tokenNodePtr = sentenceNodePtr->Value->_head;
 
-        while (wordNode = wordNode->Next)
+        if (!tokenNodePtr) continue;
+
+        do
         {
-            output << " " << (*wordNode).Value;
-        }
+            output << tokenNodePtr->Value;
 
+            if (tokenNodePtr->Next && !ispunct(tokenNodePtr->Next->Value))
+            {
+                output << " ";
+            }
+        } while (tokenNodePtr = tokenNodePtr->Next);
+
+        output << ".";
     } while (sentenceNodePtr = sentenceNodePtr->Next);
 
-    output << ".";
+    output.close();
 }

@@ -14,8 +14,8 @@ public:
     static Text FromFile(std::string filename);
     void SaveTo(std::string filename);
 
-    void Add(std::string word);
-    void StartNewSentence();
+    void WriteToken(std::string token);
+    void BeginSentence();
     void RemoveLastSentence();
 
     void Print();

@@ -33,7 +33,9 @@
             // удалит в 3 слова на `a`
             // и в 2 на `)`
             // (по сути удаляет целых два предложения)
-            "args": [  "./sometext.txt", "./out.txt", "-d3", "a",  "-d2", ")" ],
+            // "args": [  "./sometext.txt", "./out.txt", "-d3", "a",  "-d2", ")" ],
+
+            "args": [  "./sometext.txt", "./out.txt", "-r5", "love", "hate", "-r5", "banana", "tomato" ],
 
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

@@ -1,1 +1,1 @@
-This is a text that is very suitable for testing and debugging the ReplaceDelete application (sentence0). You can write some commands that will replace and delete some of the words (sentence1). (sentence2). Bika bela guba bila tupa. New sentence.
+That's a text that is very suitable for testing and debugging the ReplaceDelete application (sentence0). You can write some commands that will replace and delete some of the words (sentence1). (sentence2). Bika bela guba bila tupa. New sentence. Fruits I love: banana, mango, apple.
