@@ -9,11 +9,8 @@ int main(int argc, char* argv[])
 
     auto text = Text::FromFile(inputFileName);
 
-    text.Print();
-    cout << endl;
-
     // словом CommandArgs будем называть те аргументы, из которых можно слепить ReplaceCommand.
-    int nonCommandArgsCount = 3; // из этих не слепишь: `mykursach.exe`, `inputFileName`, `outputFileName`
+    int nonCommandArgsCount = 3; // из этих не слепишь: `mykursach.exe`, `inputFileName.txt`, `outputFileName.txt`
 
     auto commandArgsPtr = argv + nonCommandArgsCount;
     auto commandArgsCount = argc - nonCommandArgsCount;
@@ -23,13 +20,9 @@ int main(int argc, char* argv[])
     while (!commandQueue.IsEmpty())
     {
         auto command = commandQueue.Dequeue();
-        command.Print();
-
         text.Apply(command);
-        cout << endl;
     }
 
-    cout << endl;
     text.Print();
     cout << endl;
 }

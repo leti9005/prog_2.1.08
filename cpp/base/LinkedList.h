@@ -11,7 +11,6 @@ public: // private:
 
     LinkedList()
     {
-        std::cout << "Linked list created!" << std::endl;
     }
 
     void Add(T value)
