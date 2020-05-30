@@ -2,6 +2,39 @@
 
 using namespace std;
 
+int main(int argc, char* argv[])
+{
+    string inputFileName = argv[1];
+    string outputFileName = argv[2];
+
+    auto text = Text::FromFile(inputFileName);
+
+    text.Print();
+    cout << endl;
+
+    // словом CommandArgs будем называть те аргументы, из которых можно слепить ReplaceCommand.
+    int nonCommandArgsCount = 3; // из этих не слепишь: `mykursach.exe`, `inputFileName`, `outputFileName`
+
+    auto commandArgsPtr = argv + nonCommandArgsCount;
+    auto commandArgsCount = argc - nonCommandArgsCount;
+
+    auto commandQueue = getCommandQueueFromArgs(commandArgsPtr, commandArgsCount);
+
+    while (!commandQueue.IsEmpty())
+    {
+        auto command = commandQueue.Dequeue();
+        command.Print();
+
+        text.Apply(command);
+        cout << endl;
+    }
+
+    cout << endl;
+    text.Print();
+    cout << endl;
+}
+
+
 // очень страшная логика парсинга аргументов. можно не читать.
 //  превращает "-d2 wordEnd" в ReplaceCommand(2, "wordEnd")
 //  превращает "-r10 wordEnd replaceWith" в ReplaceCommand(10, "wordEnd", "replaceWith")
@@ -51,35 +84,4 @@ Queue<ReplaceCommand> getCommandQueueFromArgs(char* args[], int argsCount)
     }
 
     return queue;
-}
-
-int main(int argc, char* argv[])
-{
-    string inputFileName = argv[1];
-    string outputFileName = argv[2];
-
-    auto text = Text::FromFile(inputFileName);
-
-    text.Print();
-    cout << endl;
-
-    int nonCommandArgsCount = 3; // "mykursach.exe", `inputFileName`, `outputFileName`
-
-    auto commandArgsPtr = argv + nonCommandArgsCount;
-    auto commandArgsCount = argc - nonCommandArgsCount;
-
-    auto commandQueue = getCommandQueueFromArgs(commandArgsPtr, commandArgsCount);
-
-    while (!commandQueue.IsEmpty())
-    {
-        auto command = commandQueue.Dequeue();
-        command.Print();
-
-        text.Apply(command);
-        cout << endl;
-    }
-
-    cout << endl;
-    text.Print();
-    cout << endl;
 }
