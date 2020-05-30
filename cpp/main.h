@@ -1,8 +1,6 @@
-#include <fstream>
-#include <iostream>
-#include "Queue.h"
-#include "WordNode.h"
-#include "SentenceNode.h"
+#include "base/Queue.h"
+#include "text/Sentence.h"
+#include "text/Text.h"
 #include "ReplaceCommand.h"
 
 Queue<ReplaceCommand> getCommandQueueFromArgs(char* args[], int argsCount);

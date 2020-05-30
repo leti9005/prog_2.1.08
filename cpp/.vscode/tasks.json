@@ -5,7 +5,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "mingw32-make -C ./cpp",
+            "command": "mingw32-make O=debug-this.exe",
             "group": {
                 "kind": "build",
                 "isDefault": true,

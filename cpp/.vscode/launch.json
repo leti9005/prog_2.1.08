@@ -6,7 +6,7 @@
             "name": "build and debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "program": "${workspaceRoot}/debug-this.exe",
             "args": [  "./sometext.txt", "./out.txt", "-d2", "ui", "-r4", "e", "f" ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

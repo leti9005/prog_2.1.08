@@ -1,0 +1,75 @@
+#pragma once
+
+#include <iostream>
+#include "ListNode.h"
+
+template <typename T>
+struct LinkedList
+{
+public: // private:
+    ListNode<T>* _head = nullptr;
+
+    LinkedList()
+    {
+        std::cout << "Linked list created!" << std::endl;
+    }
+
+    void Add(T value)
+    {
+        auto newNode = new ListNode<T>();
+        newNode->Value = value;
+
+        if (_head == nullptr)
+        {
+            _head = newNode;
+            return;
+        }
+
+        auto last = GetLast();
+        last->Next = newNode;
+    }
+
+    ListNode<T>* GetHead()
+    {
+        return _head;
+    }
+
+    ListNode<T>* GetLast()
+    {
+        auto h = _head;
+
+        while (h->Next != nullptr)
+        {
+            h = h->Next;
+        }
+
+        return h;
+    }
+
+    bool IsEmpty()
+    {
+        return _head == nullptr;
+    }
+
+    void RemoveLastNode()
+    {
+        auto last = GetLast();
+
+        if (_head == last)
+        {
+            _head = nullptr;
+            delete last;
+            return;
+        }
+
+        auto preLastNode = _head;
+        while (preLastNode->Next != last)
+        {
+            preLastNode = preLastNode->Next;
+        }
+
+        delete last;
+
+        preLastNode->Next = nullptr;
+    }
+};
