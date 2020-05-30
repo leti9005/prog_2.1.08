@@ -50,6 +50,8 @@ void Text::Apply(ReplaceCommand command)
     auto sentence = _sentenceSequence.ElementAt(command.SentenceIndex)->Value;
 
     ListNode<string>* word = sentence->_head;
+    if (!word) return;
+
     while (EndsWith(word->Value, command.WordEnding))
     {
         if (command.ReplaceWith != "")
@@ -58,9 +60,12 @@ void Text::Apply(ReplaceCommand command)
             break;
         }
 
-        sentence->_head = word->Next; // word->Next ? word->Next : nullptr;
+        sentence->_head = word->Next;
         delete word;
         word = sentence->_head;
+
+        // ой, удалили последнее слово!
+        if (!word) return;
     }
 
     auto nextWord = word->Next;
@@ -68,20 +73,25 @@ void Text::Apply(ReplaceCommand command)
     {
         if (!nextWord) break;
 
-        // segfault
-        if (!EndsWith(nextWord->Value, command.WordEnding)) continue;
+        if (!EndsWith(nextWord->Value, command.WordEnding))
+        {
+            word = nextWord;
+            continue;
+        }
 
         if (command.ReplaceWith != "")
         {
             nextWord->Value = command.ReplaceWith;
-            word = nextWord;
         }
         else
         {
             word->Next = nextWord->Next;
             delete nextWord;
+
+            nextWord = word;
         }
 
+        word = nextWord;
     } while (nextWord = nextWord->Next);
 
 }
@@ -123,6 +133,8 @@ void Text::Print()
     {
         auto sentence = *sentenceNodePtr;
         auto wordNode = sentence.Value->_head;
+
+        if (!wordNode) continue;
 
         cout << (*wordNode).Value << " ";
 

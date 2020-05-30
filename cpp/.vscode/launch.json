@@ -7,8 +7,34 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/debug-this.exe",
-            // "args": [  "./sometext.txt", "./out.txt", "-r0", "ing", "[GERUND]", "-d1", "e" ],
-            "args": [  "./sometext.txt", "./out.txt", "-r0", "ing", "[GERUND]" ],
+
+            // --  test-cases уровня "дед"  --
+            // --  раскомментить и нажать F5 чтобы затестить  --
+
+            // удалит все слова в первом (не нулевом!) предложении,
+            // которые заканчиваются на `e` (write, some, replace, delete)
+            // "args": [  "./sometext.txt", "./out.txt", "-d1", "e" ],
+
+            // то же самое, но в нулевом
+            // "args": [  "./sometext.txt", "./out.txt", "-d0", "e" ],
+
+            // заменит в 0 слова, заканчивающиеся на is, на `[ends_is]`
+            // "args": [  "./sometext.txt", "./out.txt", "-r0", "is", "[ends_is]" ],
+
+            // удалит в 0 слова, заканчивающиеся на is
+            // "args": [  "./sometext.txt", "./out.txt", "-d0", "is" ],
+
+            // заменит в 0 слова, заканчивающиеся на ing, на `[GERUND]`
+            // "args": [  "./sometext.txt", "./out.txt", "-r0", "ing", "[GERUND]" ],
+
+            // удалит в 2 слова на `)`
+            // "args": [  "./sometext.txt", "./out.txt", "-d2", ")" ],
+
+            // удалит в 3 слова на `a`
+            // и в 2 на `)`
+            // (по сути удаляет целых два предложения)
+            "args": [  "./sometext.txt", "./out.txt", "-d3", "a",  "-d2", ")" ],
+
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
