@@ -1,6 +1,2 @@
 *.exe
-*.log
-
 out*.txt
-
-random/
