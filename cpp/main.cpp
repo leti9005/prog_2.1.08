@@ -47,17 +47,17 @@ Queue<ReplaceCommand> getCommandQueueFromArgs(char* args[], int argsCount)
 
     while (argsCount)
     {
-        auto argument = new string(*argPtr);
+        string argument(*argPtr);
 
         // "-d100", get 100
-        int sentenceIndex = stoi(argument->substr(2));
+        int sentenceIndex = stoi(argument.substr(2));
 
         // "-d100 ивет", get "ивет"
         string wordEnding = *(argPtr + 1);
 
         ReplaceCommand command(sentenceIndex, wordEnding);
 
-        auto type = argument->at(1);
+        char type = argument.at(1);
 
         if (type == 'r') {
             string replaceWith = *(argPtr + 2);
@@ -79,8 +79,6 @@ Queue<ReplaceCommand> getCommandQueueFromArgs(char* args[], int argsCount)
         }
 
         queue.Enqueue(command);
-
-        delete argument;
     }
 
     return queue;

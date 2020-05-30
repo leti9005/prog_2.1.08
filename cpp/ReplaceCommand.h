@@ -13,6 +13,4 @@ public:
     ReplaceCommand(int sentenceIndex, std::string wordEnding, std::string replaceWith = "");
 
     void Print();
-
-    // void ApplyToSentence(std::string sentence);
 };

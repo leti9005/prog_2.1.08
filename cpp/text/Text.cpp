@@ -24,8 +24,6 @@ Text Text::FromFile(string filename)
 
             text.Add(wordWithoutDot);
             text.StartNewSentence();
-
-            cout << "Last word: " << wordWithoutDot << endl << endl;
         }
     }
 
@@ -70,6 +68,7 @@ void Text::Apply(ReplaceCommand command)
     {
         if (!nextWord) break;
 
+        // segfault
         if (!EndsWith(nextWord->Value, command.WordEnding)) continue;
 
         if (command.ReplaceWith != "")
