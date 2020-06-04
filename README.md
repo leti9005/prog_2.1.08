@@ -11,7 +11,7 @@ mingw32-make
 я сам не знаю как это работает
 
 ```
-.\a.exe .\sometext.txt newtext.txt -d2 ui -r5 hh vv
+./a.exe ./sometext.txt ./out.txt -r5 love hate -r5 banana tomato
 ```
 
 # что есть:
